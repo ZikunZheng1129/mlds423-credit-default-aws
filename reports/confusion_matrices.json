@@ -1,0 +1,14 @@
+{
+  "logistic_regression": {
+    "true_negative": 3996,
+    "false_positive": 677,
+    "false_negative": 569,
+    "true_positive": 758
+  },
+  "random_forest": {
+    "true_negative": 4085,
+    "false_positive": 588,
+    "false_negative": 571,
+    "true_positive": 756
+  }
+}

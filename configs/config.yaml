@@ -1,0 +1,84 @@
+project:
+  name: credit-card-default-aws-ml-system
+  version: 0.1.0
+  random_state: 7
+
+aws:
+  region: us-east-2
+  s3_bucket: null
+  upload_enabled: false
+  s3_prefix: credit-default-pipeline
+
+data:
+  raw_uri: data/raw/default_of_credit_card_clients.csv
+  processed_uri: data/processed/credit_default_processed.csv
+  target_column: default.payment.next.month
+  id_column: ID
+
+training:
+  test_size: 0.2
+  random_state: 7
+  stratify: true
+  threshold_tuning_enabled: true
+
+features:
+  use_engineered_features: true
+  categorical_columns:
+    - SEX
+    - EDUCATION
+    - MARRIAGE
+  scale_numeric_for_linear_models: true
+
+models:
+  baseline:
+    name: logistic_regression
+    params:
+      max_iter: 1000
+      class_weight: balanced
+  random_forest:
+    name: random_forest
+    params:
+      n_estimators: 300
+      min_samples_leaf: 20
+      max_features: sqrt
+      class_weight: balanced
+      n_jobs: -1
+  xgboost:
+    name: xgboost
+    params:
+      n_estimators: 300
+      learning_rate: 0.05
+      max_depth: 4
+      subsample: 0.9
+      colsample_bytree: 0.9
+      eval_metric: auc
+      n_jobs: -1
+
+evaluation:
+  cv_folds: 5
+  threshold_metric: f1
+  positive_class: 1
+  best_model_primary_metric: roc_auc
+  best_model_tie_breaker: f1
+
+artifacts:
+  base_dir: artifacts
+  models_dir: artifacts/models
+  metadata_dir: artifacts/metadata
+  metrics_dir: reports
+  processed_data_dir: data/processed
+  model_artifact_uri: artifacts/best_model.joblib
+  best_model_path: artifacts/best_model.joblib
+  metrics_summary_path: reports/metrics_summary.csv
+  confusion_matrices_path: reports/confusion_matrices.json
+
+api:
+  host: 0.0.0.0
+  port: 8000
+  model_path: artifacts/best_model.joblib
+  metadata_path: artifacts/best_model_metadata.json
+  default_threshold: 0.5
+
+logging:
+  level: INFO
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
