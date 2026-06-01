@@ -134,8 +134,6 @@ def _write_reports(results: list[dict[str, Any]], cfg: dict[str, Any]) -> None:
                 "precision": metrics["precision"],
                 "recall": metrics["recall"],
                 "f1": metrics["f1"],
-                "training_time_seconds": metrics["training_time_seconds"],
-                "inference_time_seconds": metrics["inference_time_seconds"],
                 "selected_threshold": result["threshold"],
             }
         )
@@ -165,7 +163,6 @@ def run_pipeline(config_path: str | Path = "configs/config.yaml") -> dict[str, A
     training_cfg = cfg["training"]
     random_state = int(training_cfg.get("random_state", cfg["project"].get("random_state", 7)))
     cv_folds = int(cfg["evaluation"].get("cv_folds", 5))
-    timestamp = datetime.now(timezone.utc).isoformat()
 
     raw_df = load_raw_data(cfg["data"]["raw_uri"])
     clean_df = clean_credit_data(raw_df)
@@ -194,13 +191,8 @@ def run_pipeline(config_path: str | Path = "configs/config.yaml") -> dict[str, A
             else (0.5, 0.0)
         )
 
-        import time
-
-        start = time.perf_counter()
         estimator.fit(X_train, y_train)
-        training_time = time.perf_counter() - start
         metrics, confusion = evaluate_model(estimator, X_test, y_test, threshold)
-        metrics["training_time_seconds"] = float(training_time)
         metrics["threshold_cv_f1"] = float(threshold_f1)
 
         metadata = {
@@ -209,7 +201,6 @@ def run_pipeline(config_path: str | Path = "configs/config.yaml") -> dict[str, A
             "threshold": threshold,
             "metrics": metrics,
             "confusion_matrix": confusion,
-            "training_timestamp": timestamp,
         }
         model_path, metadata_path = _save_model_outputs(model_name, estimator, metadata, cfg)
         results.append(

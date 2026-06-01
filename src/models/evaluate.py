@@ -78,7 +78,6 @@ def evaluate_model(
         "precision": float(precision_score(y_test, predictions, zero_division=0)),
         "recall": float(recall_score(y_test, predictions, zero_division=0)),
         "f1": float(f1_score(y_test, predictions, zero_division=0)),
-        "inference_time_seconds": float(inference_time),
         "inference_rows": int(len(X_test)),
     }
     confusion = {
