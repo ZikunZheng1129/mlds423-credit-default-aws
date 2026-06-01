@@ -19,9 +19,15 @@ python pipeline.py --config configs/config.yaml
 uvicorn src.api.app:app --host 0.0.0.0 --port 8000
 ```
 
-## Key Result
+## Key Results
 
-The best model is Random Forest with ROC AUC about `0.80`.
+The selected final model is Random Forest. It gives strong, practical performance for the credit default prediction task, with ROC AUC about `0.80` and accuracy about `0.81`.
+
+| Model | ROC AUC | Accuracy | Precision | Recall | F1 |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| Random Forest | 0.800 | 0.807 | 0.563 | 0.570 | 0.566 |
+| XGBoost | 0.801 | 0.804 | 0.554 | 0.584 | 0.569 |
+| Logistic Regression | 0.774 | 0.792 | 0.528 | 0.571 | 0.549 |
 
 ## Repository Structure
 
@@ -31,26 +37,6 @@ The best model is Random Forest with ROC AUC about `0.80`.
 - `tests/` - unit and API tests
 - `reports/` - final metrics and AWS deployment evidence
 - `artifacts/` - model metadata; large generated artifacts are ignored
-
-## Completed Requirements
-
-- [x] Data ingestion and preprocessing
-- [x] Feature engineering
-- [x] Baseline Logistic Regression model
-- [x] Random Forest model selection
-- [x] Model evaluation and metrics export
-- [x] FastAPI inference service
-- [x] Docker support
-- [x] S3 raw data storage evidence
-- [x] EC2 model training evidence
-- [x] EC2 FastAPI demo evidence
-- [x] Automated tests and compile verification
-
-## Remaining Items
-
-- [ ] Final presentation PPT/PDF
-- [ ] Final source zip if required
-- [ ] Confirm no secrets or large artifacts are included
 
 ## Security Note
 
