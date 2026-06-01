@@ -66,9 +66,7 @@ def evaluate_model(
     threshold: float,
 ) -> tuple[dict[str, float | int], dict[str, int]]:
     """Evaluate a fitted model at a selected decision threshold."""
-    start = time.perf_counter()
     probabilities = model.predict_proba(X_test)[:, 1]
-    inference_time = time.perf_counter() - start
     predictions = (probabilities >= threshold).astype(int)
     tn, fp, fn, tp = confusion_matrix(y_test, predictions, labels=[0, 1]).ravel()
 
