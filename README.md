@@ -1,115 +1,57 @@
-# MLDS423 Credit Default Prediction AWS Project
+# MLDS423 Credit Default Prediction
 
-## Brief Overview
+This project builds an end-to-end credit card default prediction pipeline for the MLDS423 final submission. It includes data ingestion, preprocessing, model training, evaluation, a FastAPI inference service, tests, and AWS deployment evidence.
 
-This project is an AWS-ready end-to-end machine learning pipeline for credit card default prediction. It includes an S3-ready data pipeline, model training, FastAPI inference, Docker support, and cloud deployment documentation for an MLDS423 Cloud Engineering final project.
+## Deployment Approach
 
-## Repository Structure
+Final deployment approach: `EC2 Training + EC2 API Demo`.
 
-- `src/` - reusable Python modules for config, data processing, modeling, cloud utilities, and API
-- `configs/` - local and AWS demo YAML configuration files
-- `scripts/` - data download, API smoke test, and optional S3 upload helpers
-- `reports/` - metrics, architecture notes, cost notes, deployment guide, and AWS demo runbook
-- `tests/` - unit and API tests
-- `artifacts/` - generated model metadata and artifact README; large model files are ignored
-- `data/` - raw/processed data folders; CSV files are ignored
+Raw data was stored in S3, EC2 was used for model training, and the FastAPI service was tested on EC2. Deployment evidence is included in the report materials under `reports/`, including S3 screenshots, EC2 terminal output, training logs, model artifact evidence, and API response screenshots.
 
-## Local Setup
+## Local Run Commands
 
 ```bash
 python3 -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
-```
-
-## Data Download
-
-```bash
 python scripts/download_data.py
-```
-
-This downloads the public KaggleHub dataset and saves:
-
-```text
-data/raw/default_of_credit_card_clients.csv
-```
-
-Raw data is intentionally not committed to GitHub.
-
-## Run Training Pipeline
-
-```bash
 python pipeline.py --config configs/config.yaml
-```
-
-## Local Verification Results
-
-- Tests: `25 passed`
-- Raw data shape: `(30000, 25)`
-- Best model: `random_forest`
-- ROC AUC: `0.7998815043401374`
-- Accuracy: `0.8068333333333333`
-- Precision: `0.5625`
-- Recall: `0.5697061039939714`
-- F1: `0.5660801198053164`
-- Threshold: `0.55`
-- FastAPI `/health`: successful, `model_loaded: true`
-- FastAPI `/predict`: successful with one sample record
-
-## Run API Locally
-
-```bash
 uvicorn src.api.app:app --host 0.0.0.0 --port 8000
-curl http://localhost:8000/health
 ```
 
-## Docker
+## Key Result
 
-```bash
-docker build -t mlds423-credit-default-api .
-docker run --rm -p 8000:8000 mlds423-credit-default-api
-```
+The best model is Random Forest with ROC AUC about `0.80`.
 
-For local model/data access during a real API demo, mount local folders as shown in `reports/aws_demo_runbook.md` or use `docker-compose.yml`.
+## Repository Structure
 
-## AWS Documentation
-
-- [Architecture Notes](reports/architecture_notes.md)
-- [Cost Estimate Notes](reports/cost_estimate_notes.md)
-- [Deployment Guide](reports/deployment_guide.md)
-- [Security, Logging, And Monitoring Notes](reports/security_logging_monitoring.md)
-- [AWS Demo Runbook](reports/aws_demo_runbook.md)
+- `src/` - pipeline, modeling, API, and utility modules
+- `configs/` - local and AWS demo configuration files
+- `scripts/` - dataset download, S3 upload helper, and API smoke test
+- `tests/` - unit and API tests
+- `reports/` - final metrics and AWS deployment evidence
+- `artifacts/` - model metadata; large generated artifacts are ignored
 
 ## Completed Requirements
 
 - [x] Data ingestion and preprocessing
 - [x] Feature engineering
-- [x] Baseline Logistic Regression
-- [x] Advanced Random Forest
-- [x] Optional XGBoost support with graceful fallback
-- [x] Metrics and model artifact generation
+- [x] Baseline Logistic Regression model
+- [x] Random Forest model selection
+- [x] Model evaluation and metrics export
 - [x] FastAPI inference service
 - [x] Docker support
-- [x] S3-ready config and utilities
-- [x] AWS architecture documentation
-- [x] Cost estimate notes
-- [x] Security/logging/monitoring notes
-- [x] Unit tests
+- [x] S3 raw data storage evidence
+- [x] EC2 model training evidence
+- [x] EC2 FastAPI demo evidence
+- [x] Automated tests and compile verification
 
-## Still Needed According To MLDS423 Requirements
+## Remaining Items
 
-- [ ] Final live AWS deployment evidence still needs to be completed by the team.
-- [ ] Capture screenshots/logs for AWS demo:
-  - S3 raw dataset
-  - cloud training run
-  - artifacts/reports uploaded to S3
-  - `/health` and `/predict` if API is deployed
-- [ ] Final architecture diagram should be exported from diagrams.net or equivalent.
-- [ ] AWS Cost Calculator screenshot/export should be added if required by instructor.
-- [ ] Final presentation PPT/PDF still needs to be prepared.
-- [ ] Final source-code zip/package should be prepared for submission.
+- [ ] Final presentation PPT/PDF
+- [ ] Final source zip if required
+- [ ] Confirm no secrets or large artifacts are included
 
 ## Security Note
 
-`.env`, AWS credentials, raw data, processed data, and large model artifacts are not committed. boto3 uses IAM roles, environment variables, AWS CLI profiles, or the default credential chain.
-
+AWS credentials, `.env` files, raw data, processed data, and large model artifacts are not committed.
