@@ -225,3 +225,30 @@ def test_model_specs_skip_xgboost_when_construction_fails(
     assert model_names == ["logistic_regression", "random_forest"]
     assert "XGBoost skipped" in caplog.text
     assert "brew install libomp" in caplog.text
+
+
+def test_model_specs_injects_random_state_into_baseline() -> None:
+    X = clean_credit_data(_raw_credit_df()).drop(columns=["default"])
+    cfg = {
+        "project": {"random_state": 7},
+        "training": {"random_state": 42},
+        "models": {
+            "baseline": {
+                "name": "logistic_regression",
+                "params": {"max_iter": 100},
+            },
+            "random_forest": {
+                "name": "random_forest",
+                "params": {"n_estimators": 5, "n_jobs": 1},
+            },
+            "xgboost": {
+                "name": "xgboost",
+                "params": {"n_estimators": 5},
+            },
+        },
+    }
+
+    specs = pipeline._model_specs(cfg, X)
+    baseline_model = specs[0][1].named_steps["model"]
+
+    assert baseline_model.get_params()["random_state"] == 42

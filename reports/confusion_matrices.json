@@ -10,5 +10,11 @@
     "false_positive": 588,
     "false_negative": 571,
     "true_positive": 756
+  },
+  "xgboost": {
+    "true_negative": 4049,
+    "false_positive": 624,
+    "false_negative": 552,
+    "true_positive": 775
   }
 }

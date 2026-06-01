@@ -60,7 +60,10 @@ def _model_specs(cfg: dict[str, Any], X_train: pd.DataFrame) -> list[tuple[str, 
     specs: list[tuple[str, Any]] = [
         (
             model_cfg["baseline"]["name"],
-            build_logistic_regression_pipeline(X_train, model_cfg["baseline"].get("params")),
+            build_logistic_regression_pipeline(
+                X_train,
+                {**model_cfg["baseline"].get("params", {}), "random_state": random_state},
+            ),
         ),
         (
             model_cfg["random_forest"]["name"],

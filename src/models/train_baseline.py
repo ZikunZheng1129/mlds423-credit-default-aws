@@ -65,7 +65,12 @@ def build_logistic_regression_pipeline(
     params: dict[str, Any] | None = None,
 ) -> Pipeline:
     """Create the baseline Logistic Regression pipeline."""
-    model_params = {"max_iter": 1000, "class_weight": "balanced", "solver": "lbfgs"}
+    model_params = {
+        "max_iter": 1000,
+        "class_weight": "balanced",
+        "solver": "lbfgs",
+        "random_state": 7,
+    }
     model_params.update(params or {})
     return Pipeline(
         [
